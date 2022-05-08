@@ -1,5 +1,6 @@
 const fs = require('fs');
 const http = require('http');
+const url = require('url');
 
 
 
@@ -34,11 +35,11 @@ return output;
 //SERVER
 const server = http.createServer((req, res) =>{
     console.log(req.url);
-
+    const {query, pathname} = url.parse(req.url, true);
     const pathName = req.url;
  
  //Overview route
-    if(pathName === "/" || pathName === "/overview"){
+    if(pathname === "/" || pathname === "/overview"){
 
         res.writeHead(200, {'content-type':'text/html'});
 
@@ -47,11 +48,18 @@ const server = http.createServer((req, res) =>{
         res.end(output);
 
 // Product route
-    }else if(pathName === "/product"){
+    }else if(pathname === "/product"){
 
-        res.end('this is the PRODUCT');
+        console.log(query);
+        res.writeHead(200, {'content-type':'text/html'});
+
+        const product = dataObj[query.id];
+
+        const output = replaceTemplate(tempProduct, product);
+
+        res.end(output);
 // Api
-    }else if(pathName === "/api"){
+    }else if(pathname === "/api"){
       
          res.writeHead(200, {'content-type':'application/json'});
 
